@@ -3,13 +3,15 @@ package personal.projects.GymPlan.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import personal.projects.GymPlan.dtos.UserDto;
+import personal.projects.GymPlan.entities.User;
 import personal.projects.GymPlan.servicies.UserService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -24,6 +26,34 @@ public class UserController {
 //        return userService.login(username,password);
 //    }
 
+    @GetMapping(value = "/login")
+    public String login(@ModelAttribute(name = "user") UserDto user) {
+        return "login";
+    }
+
+    @PostMapping(value = "/login")
+    public String renderHomePage(@ModelAttribute(name = "user") User user, Model model) {
+        return "home";
+    }
+
+    @GetMapping(value = "/logout")
+    public String logout(@ModelAttribute(name = "user") UserDto user) {
+        return "login";
+    }
+
+    @GetMapping(value = "/home")
+    public String returnToHomePage(Model model) {
+
+        User user = new User();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            user.setUsername(((User) principal).getUsername());
+        }
+
+        model.addAttribute("user", user);
+        return "home";
+    }
+
     @PostMapping(value=CREATE_ACCOUNT, produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto register(@RequestBody final UserDto userDto) {
@@ -31,7 +61,7 @@ public class UserController {
         return userService.register(userDto);
     }
 
-    @GetMapping(value="/connect")
+    @GetMapping()
     @ResponseStatus(HttpStatus.CONTINUE)
     public String connect(){
         return "works";
