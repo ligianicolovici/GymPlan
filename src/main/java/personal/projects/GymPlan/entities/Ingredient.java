@@ -1,10 +1,18 @@
 package personal.projects.GymPlan.entities;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import personal.projects.GymPlan.utils.Shop;
 
 import javax.persistence.*;
-
+@Table(name = "ingredient")
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonPropertyOrder({ "id", "shopFrom", "quantity"})
 public class Ingredient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,10 +29,6 @@ public class Ingredient {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Shop getShopFrom() {
